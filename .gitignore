@@ -1,0 +1,7 @@
+*.bak*
+__pycache__/
+*.py[cod]
+pruebas/
+.vscode/
+.idea/
+*.log

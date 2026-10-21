@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salud · cuerpo y emoción</title>
+<style>
+  :root {
+    --bg:#060a13; --panel:#0b1220; --panel2:#0e1728; --line:#1d2b45;
+    --ink:#dbe6ff; --dim:#8ea3c7; --accent:#39e0c8; --accent2:#7ba7ff;
+  }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--ink);
+    font-family:"Segoe UI", system-ui, sans-serif; }
+  body { display:flex; flex-direction:column; overflow:hidden; }
+
+  header { display:flex; align-items:center; gap:18px; padding:10px 18px;
+    border-bottom:1px solid var(--line); background:linear-gradient(180deg,#0c1526,#081020); }
+  .marca { font-weight:700; letter-spacing:.5px; font-size:14px; color:#eaf2ff; white-space:nowrap; }
+  .marca span { color:var(--accent); }
+  nav { display:flex; gap:6px; flex-wrap:wrap; }
+  nav button { font:inherit; font-size:12.5px; padding:7px 13px; border-radius:7px; cursor:pointer;
+    border:1px solid transparent; background:transparent; color:var(--dim); }
+  nav button:hover { color:#fff; background:#101c31; }
+  nav button.on { background:#0f2f2c; border-color:#2a7f77; color:#b9fff4; }
+
+  main { flex:1; min-height:0; }
+  .vista { display:none; height:100%; }
+  .vista.on { display:grid; grid-template-columns:minmax(420px,46%) 1fr; }
+  #vDic.on { grid-template-columns:1fr 1fr 2fr; }
+
+  .izq { display:flex; flex-direction:column; min-width:0; min-height:0; border-right:1px solid var(--line); }
+  .col2 { display:flex; flex-direction:column; min-width:0; min-height:0; border-right:1px solid var(--line); }
+  #stage { position:relative; height:100%; min-height:300px; border-right:1px solid var(--line);
+    background:radial-gradient(ellipse at 50% 42%,#172742,#080d16 78%); }
+  #c { display:block; width:100%; height:100%; cursor:grab; }
+  #c:active { cursor:grabbing; }
+  #tip { position:absolute; pointer-events:none; padding:4px 9px; border-radius:6px; background:#0b1220f2;
+    border:1px solid #2a3d5e; font-size:12px; color:#fff; opacity:0; transform:translate(-50%,-140%);
+    white-space:nowrap; transition:opacity .12s; }
+  .hud { position:absolute; left:12px; bottom:10px; font-size:10.5px; color:#5e7398; line-height:1.5; }
+  .controles { position:absolute; left:12px; bottom:34px; width:160px; padding:9px 11px; border-radius:9px;
+    background:#0a1220e0; border:1px solid var(--line); font-size:11px; color:var(--dim); }
+  .controles label { display:flex; align-items:center; gap:7px; margin:4px 0; }
+  .controles .fila { display:flex; justify-content:space-between; margin-bottom:2px; }
+  .controles input[type=range] { width:100%; accent-color:var(--accent); }
+  .controles .val { color:var(--ink); font-variant-numeric:tabular-nums; }
+
+  .buscador { display:flex; flex-direction:column; gap:8px; padding:12px 14px 10px; }
+  .buscador input { width:100%; font:inherit; font-size:13px; padding:9px 11px; border-radius:7px;
+    border:1px solid var(--line); background:#081020; color:var(--ink); }
+  .buscador input:focus { outline:none; border-color:#2f8f85; }
+  .buscador .fila { display:flex; gap:8px; }
+  .buscador .fila select { flex:1; min-width:0; }
+  .buscador button { font:inherit; font-size:12px; height:34px; padding:0 12px; border-radius:7px;
+    border:1px solid var(--line); background:#0a1424; color:var(--dim); cursor:pointer; }
+  .buscador button:hover { color:#fff; border-color:#3a5580; }
+  .buscador select { font:inherit; font-size:12px; height:34px; padding:0 9px; border-radius:7px;
+    border:1px solid var(--line); background:#081020; color:#c6d4ee; cursor:pointer; }
+  .buscador select:focus { outline:none; border-color:#2f8f85; }
+
+  .lista { flex:1 1 auto; min-height:0; overflow:auto; padding:0 8px 14px; }
+  .lista .item { display:flex; gap:10px; align-items:baseline;
+    padding:8px 10px; border-radius:7px; cursor:pointer; border:1px solid transparent; }
+  .lista .item:hover { background:#0e1929; border-color:#1c2c46; }
+  .lista .item.on { background:#102b29; border-color:#2a7f77; }
+  .lista .item b { font-size:13px; font-weight:600; color:#dce7ff; }
+  .lista .vacio { padding:18px; font-size:12px; color:var(--dim); }
+
+  .der { min-width:0; min-height:0; overflow:auto; padding:26px 34px 60px; background:linear-gradient(180deg,#080f1c,#060a13); }
+  #panelDic { height:100%; padding:26px 34px 60px; }
+  .der .miga { font-size:10.5px; letter-spacing:1.4px; text-transform:uppercase; color:var(--accent); }
+  .der h2 { font-size:26px; line-height:1.22; margin:6px 0 4px; color:#f2f7ff; letter-spacing:.2px; }
+  .der .sub { font-size:12px; color:var(--dim); margin-bottom:22px; }
+  .bloque { margin:0 0 26px; max-width:760px; }
+  .bloque h3 { font-size:11px; text-transform:uppercase; letter-spacing:1.6px; color:#7d95bd;
+    margin:0 0 8px; font-weight:600; }
+  .bloque h3::before { content:""; display:inline-block; width:14px; height:2px; background:var(--accent);
+    vertical-align:middle; margin-right:8px; opacity:.8; }
+  .bloque p { margin:0; font-size:14.5px; line-height:1.72; color:#c9d7ef; }
+  .bloque.emocional p { font-size:15.5px; color:#e2ecff; }
+  .bloque.consejo { padding:16px 18px; border-radius:10px; background:#0d1e1d; border:1px solid #1e3f3b; }
+  .bloque.consejo p { color:#c8f3ec; }
+  .der .intro { max-width:720px; }
+  .der .intro h2 { font-size:24px; }
+  .der .intro p { font-size:14.5px; line-height:1.75; color:#b9c9e4; }
+  .der .intro ul { font-size:13px; color:var(--dim); line-height:2; padding-left:18px; }
+  .der .intro kbd { font:inherit; font-size:12px; padding:1px 6px; border:1px solid #2a3d5e;
+    border-radius:4px; background:#0a1424; color:#cfe0ff; }
+  .aviso { margin-top:18px; padding:12px 14px; border-radius:8px; background:#1a1526;
+    border:1px solid #3a2c52; font-size:12.5px; color:#c9bde6; line-height:1.6; }
+  .enlace { display:inline-block; margin-top:6px; padding:7px 12px; border-radius:7px; cursor:pointer;
+    border:1px solid #2a7f77; background:#0f2f2c; color:#b9fff4; font:inherit; font-size:12.5px; }
+
+  #indiceLibro { flex:1; overflow:auto; padding:8px 12px 20px; }
+  .notaLibro { margin:0 14px 8px; padding:9px 11px; border-radius:7px; background:#161226;
+    border:1px solid #332a4d; color:#b9aede; font-size:11.5px; line-height:1.5; }
+  .grupoLibro { margin:16px 0 6px; font-size:10.5px; letter-spacing:1.6px; text-transform:uppercase;
+    color:#6f86ac; padding-left:4px; }
+  .cap { display:block; width:100%; text-align:left; font:inherit; cursor:pointer; padding:10px 11px;
+    border-radius:8px; border:1px solid transparent; background:transparent; color:var(--ink); margin-bottom:2px; }
+  .cap:hover { background:#0e1929; border-color:#1c2c46; }
+  .cap.on { background:#102b29; border-color:#2a7f77; }
+  .cap b { display:block; font-size:12.5px; font-weight:600; margin-bottom:2px; }
+  .cap span { display:block; font-size:11px; line-height:1.45; color:#7d90b2; }
+  .lector h2 { font-size:23px; margin:4px 0 4px; }
+  .lector .meta { font-size:11.5px; color:var(--dim); margin-bottom:22px; }
+  .lector p { font-size:14.5px; line-height:1.78; color:#c6d4ec; max-width:780px; margin:0 0 16px; }
+
+  #vConsulta.on { display:flex; flex-direction:column; }
+  .consulta { flex:1; min-height:0; width:100%; max-width:980px; margin:0 auto;
+    display:flex; flex-direction:column; padding:20px 28px 14px; }
+  .consultaHead { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+  .consulta .miga { font-size:10.5px; letter-spacing:1.4px; text-transform:uppercase; color:var(--accent); }
+  .consulta h2 { font-size:24px; line-height:1.22; margin:5px 0 4px; color:#f2f7ff; }
+  .consultaHead p { margin:0; max-width:640px; font-size:12.5px; line-height:1.6; color:var(--dim); }
+  .estadoConsulta { flex:none; padding:6px 10px; border-radius:20px; border:1px solid var(--line);
+    background:#0a1424; color:var(--dim); font-size:10.5px; white-space:nowrap; }
+  .estadoConsulta.ok { border-color:#2a7f77; background:#0f2f2c; color:#b9fff4; }
+  .estadoConsulta.malo { border-color:#5a2b3a; background:#201018; color:#ffc9d6; }
+  .sugerencias { display:flex; flex-wrap:wrap; gap:7px; margin:14px 0 4px; }
+  .sugerencias button { font:inherit; font-size:11.5px; padding:6px 10px; border-radius:16px;
+    border:1px solid var(--line); background:#0a1424; color:#a9bcda; cursor:pointer; }
+  .sugerencias button:hover { border-color:#2a7f77; color:#b9fff4; background:#0f2f2c; }
+  .chat { flex:1; min-height:120px; overflow:auto; padding:8px 4px 14px; }
+  .msg { max-width:800px; margin:10px 0; padding:12px 15px; border-radius:12px;
+    border:1px solid var(--line); background:#0b1423; }
+  .msg.user { margin-left:auto; background:#0f2f2c; border-color:#2a7f77; }
+  .msg .quien { font-size:9.5px; letter-spacing:1.3px; text-transform:uppercase; color:#6f86ac; margin-bottom:5px; }
+  .msg.user .quien { color:#7fd9cb; }
+  .msg .texto { white-space:pre-wrap; font-size:14px; line-height:1.68; color:#d3def3; }
+  .msg .texto p { margin:0 0 9px; }
+  .msg .texto p:last-child { margin-bottom:0; }
+  .msg .texto h3, .msg .texto h4 { margin:14px 0 7px; color:#eaf2ff; font-size:15px; line-height:1.35; }
+  .msg .texto h3:first-child, .msg .texto h4:first-child { margin-top:0; }
+  .msg .texto ul, .msg .texto ol { margin:6px 0 10px; padding-left:22px; }
+  .msg .texto li { margin:3px 0; }
+  .msg .texto hr { border:0; border-top:1px solid #1b2a44; margin:12px 0; }
+  .msg .texto strong { color:#eaf2ff; font-weight:600; }
+  .msg .texto em { color:#cfe0ff; }
+  .msg .texto .cita { color:#7fd9cb; font-size:.85em; }
+  .msg.user .texto { color:#d8fff8; }
+  .msg.cargando .texto { color:var(--dim); }
+  .msg.error { border-color:#5a2b3a; background:#201018; }
+  .msg.error .texto { color:#ffc9d6; }
+  .fuentes { margin-top:11px; padding-top:9px; border-top:1px solid #1b2a44;
+    font-size:11px; line-height:1.6; color:#8fa5c8; }
+  .fuentes b { color:#b9fff4; font-weight:600; }
+  .siguientes { margin:8px 0 2px 0; }
+  .pregunta { display:flex; gap:9px; align-items:flex-end; padding-top:10px; border-top:1px solid var(--line); }
+  .pregunta textarea { flex:1; resize:none; min-height:44px; max-height:120px; font:inherit; font-size:13.5px;
+    padding:10px 12px; border-radius:8px; border:1px solid var(--line); background:#081020; color:var(--ink); }
+  .pregunta textarea:focus { outline:none; border-color:#2f8f85; }
+  .pregunta button { flex:none; font:inherit; font-size:13px; font-weight:600; height:44px; padding:0 18px;
+    border-radius:8px; border:1px solid #2a7f77; background:#0f2f2c; color:#b9fff4; cursor:pointer; }
+  .pregunta button:hover { background:#155048; }
+  .pregunta button:disabled { opacity:.5; cursor:default; }
+  .pregunta button.secundario { background:#0a1424; border-color:var(--line); color:#a9bcda;
+    font-weight:400; padding:0 13px; }
+  .pregunta button.secundario:hover { background:#101c31; border-color:#3a5580; color:#fff; }
+  .pregunta button.secundario.activa { background:#3a2a14; border-color:#8a6a2a; color:#ffe0a3; }
+  .chat .corte { border:0; border-top:1px solid #2a3d5e; margin:18px 0 14px; }
+  .notaConsulta { min-height:15px; margin-top:7px; font-size:11px; color:#6f86ac; }
+  .notaConsulta.malo { color:#e6a3b4; }
+
+  @media (max-width: 980px) {
+    .vista.on { grid-template-columns:1fr; grid-template-rows:minmax(340px,48%) 1fr; }
+    #vDic.on { grid-template-columns:1fr; grid-template-rows:minmax(300px,38%) minmax(210px,30%) 1fr; }
+    .izq { border-right:none; border-bottom:1px solid var(--line); }
+    #stage { border-right:none; border-bottom:1px solid var(--line); }
+    .col2 { border-right:none; border-bottom:1px solid var(--line); }
+    .der { padding:20px; }
+    .consulta { padding:16px 16px 10px; }
+    .consultaHead { flex-direction:column; gap:8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="marca">Salud <span>·</span> cuerpo y emoción</div>
+  <nav>
+    <button class="on" data-modo="dic">Diccionario</button>
+    <button data-modo="camino">La enfermedad como camino</button>
+    <button data-modo="creencia">La biología de la creencia</button>
+    <button data-modo="consulta">Consultar libros</button>
+  </nav>
+</header>
+
+<main>
+  <section class="vista on" id="vDic">
+    <div id="stage">
+      <canvas id="c"></canvas>
+      <div id="tip"></div>
+      <div class="controles">
+        <div class="fila"><span>Rotación</span><span class="val" id="rotVal">0°</span></div>
+        <input type="range" id="rot" min="0" max="360" step="1" value="0">
+        <label><input type="checkbox" id="bones" checked> huesos</label>
+        <label><input type="checkbox" id="spin"> girar solo</label>
+      </div>
+      <div class="hud">arrastrá para girar · rueda para acercar · clic en una parte</div>
+    </div>
+    <div class="col2">
+      <div class="buscador">
+        <input id="q" type="search" placeholder="Buscar afección, órgano o síntoma." autocomplete="off">
+        <div class="fila">
+          <select id="zona"><option value="">Todas las zonas</option></select>
+          <button id="limpiar">Limpiar</button>
+        </div>
+      </div>
+      <div class="lista" id="lista"></div>
+    </div>
+    <div class="der" id="panelDic"></div>
+  </section>
+
+  <section class="vista" id="vCamino">
+    <div class="izq">
+      <div class="buscador"><input id="qCamino" type="search" placeholder="Buscar en los capítulos…" autocomplete="off"></div>
+      <div id="indiceLibro"></div>
+    </div>
+    <div class="der lector" id="lectorCamino"></div>
+  </section>
+
+  <section class="vista" id="vCreencia">
+    <div class="izq">
+      <div class="buscador"><input id="qCreencia" type="search" placeholder="Buscar en los capítulos…" autocomplete="off"></div>
+      <div class="notaLibro">Esta edición digital no incluye la Introducción, el capítulo 5
+        (Biología y creencias), el apéndice ni la bibliografía.</div>
+      <div id="indiceCreencia"></div>
+    </div>
+    <div class="der lector" id="lectorCreencia"></div>
+  </section>
+
+  <section class="vista" id="vConsulta">
+    <div class="consulta">
+      <div class="consultaHead">
+        <div>
+          <div class="miga">Cuaderno NotebookLM</div>
+          <h2>Preguntale a los libros</h2>
+          <p>Consultá por un síntoma, un órgano, una emoción o una idea. La respuesta sale del cuaderno que reúne las dos obras y cita los pasajes que usa.</p>
+        </div>
+        <div class="estadoConsulta" id="estadoConsulta">Comprobando servidor…</div>
+      </div>
+      <div class="sugerencias" id="sugerencias">
+        <button type="button" data-q="¿Qué dice sobre el hígado?">¿Qué dice sobre el hígado?</button>
+        <button type="button" data-q="¿Cómo se relacionan las emociones y la enfermedad?">Emociones y enfermedad</button>
+        <button type="button" data-q="¿Qué es la sombra y cómo se refleja en el cuerpo?">La sombra en el cuerpo</button>
+        <button type="button" data-q="¿Qué dice Lipton sobre las creencias y la biología?">Creencias y biología</button>
+      </div>
+      <div class="chat" id="chat">
+        <div class="msg bot">
+          <div class="quien">Los libros</div>
+          <div class="texto">Preguntá lo que quieras. Respondo citando los pasajes de “La enfermedad como camino” y “La biología de la creencia”.</div>
+        </div>
+      </div>
+      <form class="pregunta" id="formConsulta">
+        <textarea id="pregunta" rows="2" placeholder="Ej.: ¿Qué relación hay entre el miedo y los riñones?" autocomplete="off"></textarea>
+        <button type="button" id="btnNueva" class="secundario" aria-pressed="false" title="La próxima pregunta empieza una conversación nueva; el chat anterior queda visible.">Nueva pregunta</button>
+        <button type="submit" id="btnConsulta">Preguntar</button>
+      </form>
+      <div class="notaConsulta" id="notaConsulta"></div>
+    </div>
+  </section>
+</main>
+
+<script src="datos/modelo.js"></script>
+<script src="datos/diccionario.js"></script>
+<script src="datos/libros.js"></script>
+<script>
+(function () {
+  "use strict";
+  const D = window.DICCIONARIO, L = window.LIBROS, M = window.MODELO;
+  const $ = (s, r) => (r || document).querySelector(s);
+  const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+
+  const norm = s => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+  const RESUMEN_CAMINO = [
+    "La enfermedad no es un fallo: es un mensaje que hay que aprender a leer.",
+    "Los opuestos se necesitan; la salud aparece al integrar las dos caras.",
+    "La sombra es todo lo que rechazo de mí y proyecto en los demás.",
+    "Los juicios de bien y mal tensan la vida y terminan en el cuerpo.",
+    "El ser humano es un enfermo que busca la totalidad a través del síntoma.",
+    "No hay una causa única: cada enfermedad cuenta una historia personal.",
+    "El método de preguntas profundas para descifrar qué dice el síntoma.",
+    "La infección habla de un conflicto que no encuentra salida ni palabra.",
+    "El sistema de defensa reacciona cuando algo invade mi territorio.",
+    "La respiración es contacto, libertad y permiso para ocupar mi lugar.",
+    "La digestión simboliza asimilar lo vivido y soltar lo que ya no sirve.",
+    "Los sentidos muestran cómo veo y oigo el mundo y a mí mismo.",
+    "El dolor de cabeza expresa pensamiento en tensión y conflicto no resuelto.",
+    "La piel es el límite: contacto, protección y miedo a ser herido.",
+    "Los riñones hablan de miedo, relaciones y derecho a ocupar espacio.",
+    "Sexualidad y embarazo expresan identidad, entrega y creatividad.",
+    "Corazón y circulación simbolizan amor, alegría y ganas de vivir.",
+    "El aparato locomotor sostiene y mueve; los nervios conducen el miedo.",
+    "El accidente es un mensaje que el cuerpo grita cuando no se escucha.",
+    "Los síntomas psíquicos muestran miedos y creencias que gobiernan la vida.",
+    "El cáncer se relaciona con un conflicto antiguo y profundo sin resolver.",
+    "El SIDA plantea la defensa extrema y la dificultad de entregarse.",
+    "El cierre propone un camino de autoconocimiento y responsabilidad."
+  ];
+  const RESUMEN_CREENCIA = [
+    "Presentación de la obra y de su autor por Ángel Llamas.",
+    "Lipton cuenta cómo pasó del determinismo genético a una nueva mirada.",
+    "Las células son alumnas inteligentes que responden al ambiente.",
+    "El ambiente, y no los genes, es el que controla la biología.",
+    "La membrana celular actúa como cerebro que percibe y decide.",
+    "Física cuántica: energía, información e interacción mente-cuerpo.",
+    "Crecimiento y protección: el estrés crónico apaga la reparación.",
+    "Los padres transmiten creencias que programan la biología del hijo.",
+    "Ciencia y espíritu se reconcilian en una visión integrada de la vida.",
+    "Las personas e instituciones que hicieron posible el libro."
+  ];
+
+  const MAPEO = {
+    "apendice": "INTESTINOS", "duodeno": "INTESTINOS", "colon": "INTESTINOS",
+    "estomago (piloro)": "ESTÓMAGO", "estomago": "ESTÓMAGO",
+    "lengua": "BOCA", "higado": "HÍGADO", "vesicula biliar": "HÍGADO",
+    "pulmon izquierdo": "PULMONES", "pulmon derecho": "PULMONES", "pulmon derechoo": "PULMONES",
+    "bronquio izquierdo": "PULMONES", "bronquio derecho": "PULMONES",
+    "rinon izquierdo": "RIÑONES", "rinon derecho": "RIÑONES",
+    "ureter derecho": "RIÑONES", "ureter izquierdo": "RIÑONES",
+    "vejiga": "VEJIGA", "epiglotis": "GARGANTA", "faringe": "GARGANTA",
+    "hipofaringe": "GARGANTA", "orofaringe": "GARGANTA",
+    "traquea": "RESPIRACIÓN", "cabeza": "CABEZA", "cerebro": "CEREBRO",
+    "corazon": "CORAZÓN", "tiroides": "TIROIDES",
+    "vertebras": "COLUMNA VERTEBRAL", "sacro y coxis": "COLUMNA VERTEBRAL",
+    "esternon": "HUESOS", "clavicula izquierdo": "HUESOS", "clavicula derecho": "HUESOS",
+    "omoplato izquierdo": "HUESOS", "omoplato derecho": "HUESOS",
+    "humero izquierdo": "HUESOS", "humero derecho": "HUESOS",
+    "cubito derecho": "HUESOS", "cubito izquierdo": "HUESOS",
+    "radio derecho": "HUESOS", "radio izquierdo": "HUESOS",
+    "cadera izquierdo": "ARTICULACIONES", "cadera derecho": "ARTICULACIONES",
+    "femur derecho": "PIERNAS", "femur izquierdo": "PIERNAS",
+    "rotula izquierdo": "PIERNAS", "rotula derecho": "PIERNAS",
+    "tibia derecho": "PIERNAS", "tibia izquierdo": "PIERNAS",
+    "perone derecho": "PIERNAS", "perone izquierdo": "PIERNAS",
+    "metacarpiano": "MANOS", "falange": "MANOS",
+    "metatarsiano": "PIES", "dedos del pie": "PIES"
+  };
+
+  const organoDeEtiqueta = etiqueta => {
+    let t = norm(etiqueta).replace(/\s+\d+$/, "");
+    return MAPEO[t] || MAPEO[t.replace(/\s+\d+$/, "")] || null;
+  };
+
+  const porOrgano = new Map();
+  const porTitulo = new Map();
+  for (const a of D.articulos) {
+    if (!porOrgano.has(a.organo)) porOrgano.set(a.organo, []);
+    porOrgano.get(a.organo).push(a);
+    porTitulo.set(norm(a.titulo), a);
+    a._n = norm(a.titulo + " " + a.organo + " " + a.texto + " " + a.fisico + " " + a.emocional + " " + a.consejo);
+  }
+  for (const arr of porOrgano.values()) arr.sort((x, y) => x.titulo.localeCompare(y.titulo, "es"));
+
+  const palabras = s => new Set(norm(s).split(" ").filter(x => x.length > 2));
+  function parecido(a, b) {
+    if (!a.size || !b.size) return 0;
+    let n = 0;
+    for (const x of a) if (b.has(x)) n++;
+    return n / Math.max(a.size, b.size);
+  }
+  function relacion(t) {
+    const n = norm(t);
+    const exacto = porTitulo.get(n);
+    if (exacto) return exacto;
+    const pref = D.articulos.find(a => norm(a.titulo).startsWith(n));
+    if (pref) return pref;
+    const ta = palabras(t);
+    let mejor = null, puntaje = 0;
+    for (const a of D.articulos) {
+      if (a.alias) continue;
+      const s = parecido(ta, palabras(a.titulo));
+      if (s > puntaje) { puntaje = s; mejor = a; }
+    }
+    return puntaje >= 0.6 ? mejor : null;
+  }
+  const tieneTexto = a => !!(a.texto || a.fisico || a.emocional || a.consejo);
+
+  const esc = s => (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const cap = s => { const t = (s || "").trim(); return t.charAt(0).toUpperCase() + t.slice(1); };
+
+  /* ---------------- visor 3D ---------------- */
+  const canvas = $("#c");
+  const gl = canvas.getContext("webgl2", { antialias: true, alpha: false });
+  const estado = { angulo: 0, dist: 1800, huesos: true, giro: false, organo: null, resaltado: null, hover: -1 };
+  let items = [], prog, progId, u = {}, aPos = -1, aPosId = -1;
+  let fbo, idTex, idDep, fw = 0, fh = 0;
+
+  function crearShader(tipo, src) {
+    const s = gl.createShader(tipo);
+    gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  function crearProg(vs, fs) {
+    const p = gl.createProgram();
+    gl.attachShader(p, crearShader(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, crearShader(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    return p;
+  }
+
+  if (!gl) {
+    $("#stage").innerHTML = '<div style="padding:30px;color:#8ea3c7;font-size:13px">Este navegador no tiene WebGL2. Probá con Chrome o Edge actualizado.</div>';
+  } else {
+    const VS = `#version 300 es
+      in vec3 aPos; uniform mat4 uMVP; out vec3 vPos;
+      void main(){ vPos = aPos; gl_Position = uMVP * vec4(aPos,1.0); }`;
+    const FS = `#version 300 es
+      precision highp float; in vec3 vPos; uniform vec4 uColor; out vec4 outColor;
+      void main(){
+        vec3 n = normalize(cross(dFdx(vPos), dFdy(vPos)));
+        vec3 luz = normalize(vec3(0.32,0.55,0.78));
+        vec3 relleno = normalize(vec3(-0.52,-0.24,0.46));
+        float d = abs(dot(n,luz));
+        float d2 = abs(dot(n,relleno));
+        vec3 rgb = uColor.rgb * (0.72 + 0.52*d + 0.16*d2);
+        outColor = vec4(rgb, uColor.a);
+      }`;
+    const FSID = `#version 300 es
+      precision highp float; uniform vec4 uColor; out vec4 outColor;
+      void main(){ outColor = uColor; }`;
+
+    prog = crearProg(VS, FS); progId = crearProg(VS, FSID);
+    u = {
+      mvp: gl.getUniformLocation(prog, "uMVP"), color: gl.getUniformLocation(prog, "uColor"),
+      idMvp: gl.getUniformLocation(progId, "uMVP"), idColor: gl.getUniformLocation(progId, "uColor")
+    };
+    aPos = gl.getAttribLocation(prog, "aPos");
+    aPosId = gl.getAttribLocation(progId, "aPos");
+
+    items = M.parts.map((p, idx) => {
+      const vbo = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(p.p), gl.STATIC_DRAW);
+      const ibo = gl.createBuffer();
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(p.i), gl.STATIC_DRAW);
+      const hueso = String(p.n).startsWith("H_");
+      return { idx, vbo, ibo, count: p.i.length, c: p.c, q: p.q,
+        l: p.l, n: p.n, hueso,
+        organo: hueso ? (organoDeEtiqueta(p.l) || "HUESOS") : organoDeEtiqueta(p.l) };
+    });
+
+    fbo = gl.createFramebuffer(); idTex = gl.createTexture(); idDep = gl.createRenderbuffer();
+  }
+
+  function mul(a, b) {
+    const o = new Float32Array(16);
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++)
+      o[c*4+r] = a[r]*b[c*4] + a[4+r]*b[c*4+1] + a[8+r]*b[c*4+2] + a[12+r]*b[c*4+3];
+    return o;
+  }
+  const persp = (fov, asp, n, f) => {
+    const t = 1 / Math.tan(fov/2), nf = 1 / (n - f);
+    return new Float32Array([t/asp,0,0,0, 0,t,0,0, 0,0,(f+n)*nf,-1, 0,0,2*f*n*nf,0]);
+  };
+  const tras = z => { const m = new Float32Array(16); m[0]=m[5]=m[10]=m[15]=1; m[14]=z; return m; };
+  const rad = g => g * Math.PI / 180;
+  const rotY = a => { const c = Math.cos(a), s = Math.sin(a);
+    return new Float32Array([c,0,-s,0, 0,1,0,0, s,0,c,0, 0,0,0,1]); };
+
+  function mvpActual() {
+    const asp = canvas.width / Math.max(1, canvas.height);
+    return mul(persp(32*Math.PI/180, asp, 10, 9000), mul(tras(-estado.dist), rotY(rad(estado.angulo))));
+  }
+
+  function ajustar() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = Math.max(2, Math.floor(canvas.clientWidth * dpr));
+    const h = Math.max(2, Math.floor(canvas.clientHeight * dpr));
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+    if (!gl) return;
+    if (fw !== w || fh !== h) {
+      fw = w; fh = h;
+      gl.bindTexture(gl.TEXTURE_2D, idTex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.bindRenderbuffer(gl.RENDERBUFFER, idDep);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, idTex, 0);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, idDep);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+  }
+
+  function enlazar(attr, it) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, it.vbo);
+    gl.enableVertexAttribArray(attr);
+    gl.vertexAttribPointer(attr, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, it.ibo);
+  }
+
+  const visibles = () => items.filter(p => estado.huesos || !p.hueso);
+
+  function dibujar() {
+    if (!gl) return;
+    ajustar();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0.052, 0.078, 0.128, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthFunc(gl.LEQUAL);
+    gl.disable(gl.CULL_FACE);
+    const mvp = mvpActual();
+    const lista = visibles();
+    const ar = rad(estado.angulo), sa = Math.sin(ar), ca = Math.cos(ar);
+    for (const p of lista) p._z = -p.q[0]*sa + p.q[2]*ca;
+    lista.sort((a, b) => a._z - b._z);
+
+    gl.useProgram(prog);
+    gl.uniformMatrix4fv(u.mvp, false, mvp);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    gl.depthMask(false);
+
+    const sel = estado.resaltado;
+    for (const p of lista) {
+      if (sel && p.organo === sel) continue;
+      const act = estado.hover === p.idx;
+      let base = p.hueso ? 0.18 : 0.42;
+      if (sel) base = p.hueso ? 0.08 : 0.14;
+      gl.uniform4f(u.color,
+        act ? Math.min(1, p.c[0] + 0.25) : p.c[0],
+        act ? Math.min(1, p.c[1] + 0.32) : p.c[1],
+        act ? Math.min(1, p.c[2] + 0.35) : p.c[2],
+        act ? 0.75 : base);
+      enlazar(aPos, p);
+      gl.drawElements(gl.TRIANGLES, p.count, gl.UNSIGNED_SHORT, 0);
+    }
+
+    const marcados = lista.filter(p => sel && p.organo === sel);
+    if (marcados.length) {
+      gl.clear(gl.DEPTH_BUFFER_BIT);
+      gl.depthMask(true);
+      gl.disable(gl.BLEND);
+      for (const p of marcados) {
+        gl.uniform4f(u.color, Math.min(1, p.c[0]*1.15+0.12), Math.min(1, p.c[1]*1.15+0.12),
+          Math.min(1, p.c[2]*1.15+0.12), 1);
+        enlazar(aPos, p);
+        gl.drawElements(gl.TRIANGLES, p.count, gl.UNSIGNED_SHORT, 0);
+      }
+    }
+    gl.depthMask(true);
+  }
+
+  function pick(mx, my) {
+    if (!gl) return -1;
+    ajustar();
+    const dpr = canvas.width / Math.max(1, canvas.clientWidth);
+    const x = Math.floor(mx * dpr), y = Math.floor(canvas.height - my * dpr);
+    if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) return -1;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(0,0,0,0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST);
+    gl.disable(gl.BLEND);
+    gl.useProgram(progId);
+    gl.uniformMatrix4fv(u.idMvp, false, mvpActual());
+    for (const p of visibles()) {
+      const id = p.idx + 1;
+      gl.uniform4f(u.idColor, (id & 255)/255, ((id >> 8) & 255)/255, 0, 1);
+      enlazar(aPosId, p);
+      gl.drawElements(gl.TRIANGLES, p.count, gl.UNSIGNED_SHORT, 0);
+    }
+    const buf = new Uint8Array(4);
+    gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, buf);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    const id = buf[0] + buf[1]*256;
+    return id ? id - 1 : -1;
+  }
+
+  /* ---------------- interfaz diccionario ---------------- */
+  const tip = $("#tip"), listaEl = $("#lista"), zonaEl = $("#zona"), panel = $("#panelDic");
+  const rot = $("#rot"), rotVal = $("#rotVal");
+
+  function setAngulo(deg) {
+    estado.angulo = ((deg % 360) + 360) % 360;
+    rot.value = Math.round(estado.angulo);
+    rotVal.textContent = Math.round(estado.angulo) + "°";
+    dibujar();
+  }
+
+  function intro() {
+    estado.resaltado = null;
+    panel.innerHTML = `<div class="intro">
+      <div class="miga">Diccionario de las enfermedades emocionales</div>
+      <h2>El cuerpo como mapa</h2>
+      <p>Hacé clic en un órgano del cuerpo, elegí una zona o buscá una afección. En el panel
+      de contenido aparece la entrada del diccionario con su lectura física y emocional.</p>
+      <ul>
+        <li><b>${D.total.toLocaleString("es-AR")}</b> entradas · ${D.contenido} con contenido propio</li>
+        <li><b>${D.organos.length}</b> zonas del cuerpo agrupadas</li>
+        <li>Los huesos y órganos se pueden girar, acercar y opacar</li>
+      </ul>
+      <div class="aviso">Este material es de lectura y autoconocimiento. No reemplaza el diagnóstico
+      ni el tratamiento de un profesional de la salud.</div>
+    </div>`;
+  }
+
+  function bloque(titulo, texto, cls) {
+    if (!texto) return "";
+    return `<section class="bloque ${cls || ""}"><h3>${titulo}</h3><p>${esc(texto)}</p></section>`;
+  }
+
+  function verArticulo(a) {
+    if (!a) return;
+    if (a.alias && !tieneTexto(a)) {
+      const t = a.destino ? relacion(a.destino) : null;
+      if (t) { verArticulo(t); return; }
+    }
+    estado.resaltado = a.organo === "General" ? null : a.organo;
+    marcarLista(a.id);
+    dibujar();
+    let html = `<div class="miga">${esc(a.organo)} · Diccionario</div>
+      <h2>${esc(a.titulo)}</h2>
+      <div class="sub">${a.alias ? "Entrada derivada" : "Entrada del diccionario"}</div>`;
+    html += bloque("Significado emocional", a.texto, "emocional");
+    html += bloque("Descripción física", a.fisico);
+    html += bloque("Claves emocionales", a.emocional);
+    html += bloque("Consejo", a.consejo, "consejo");
+    if (a.otros) html += bloque("Ampliación", a.otros);
+    if (a.alias && a.destino) {
+      const t = relacion(a.destino);
+      html += `<div class="aviso">Esta entrada remite a <b>${esc(a.destino)}</b>.`;
+      if (t) html += `<br><button class="enlace" data-ir="${t.id}">Abrir ${esc(t.titulo)}</button>`;
+      html += `</div>`;
+    }
+    if (!tieneTexto(a)) {
+      html += `<div class="aviso">No hay texto propio cargado para esta entrada.</div>`;
+    }
+    panel.innerHTML = html;
+    panel.scrollTop = 0;
+    const ir = $("[data-ir]", panel);
+    if (ir) ir.addEventListener("click", () => {
+      const t = D.articulos.find(x => x.id === ir.dataset.ir);
+      if (t) verArticulo(t);
+    });
+  }
+
+  function marcarLista(id) {
+    $$(".item", listaEl).forEach(el => {
+      const on = el.dataset.id === id;
+      el.classList.toggle("on", on);
+      if (on) el.scrollIntoView({ block: "nearest" });
+    });
+  }
+
+  function verOrgano(org) {
+    const arts = porOrgano.get(org) || [];
+    estado.organo = org;
+    estado.resaltado = org;
+    actualizarZona();
+    dibujar();
+    if (!arts.length) {
+      panel.innerHTML = `<div class="intro"><div class="miga">${esc(org)}</div>
+        <h2>${esc(cap(org.toLowerCase()))}</h2>
+        <p>No hay entradas del diccionario agrupadas en esta zona. Probá con otra parte del cuerpo
+        o usá el buscador.</p></div>`;
+      return;
+    }
+    const general = arts.find(a => /\(en general\)/i.test(a.titulo));
+    verArticulo(general || arts[0]);
+  }
+
+  function actualizarZona() {
+    zonaEl.value = estado.organo || "";
+  }
+
+  function elegirOrgano(org) {
+    if (!org) return;
+    if (estado.organo === org && !$("#q").value) {
+      estado.organo = null;
+      estado.resaltado = null;
+      actualizarZona(); renderLista(); dibujar();
+      return;
+    }
+    $("#q").value = "";
+    verOrgano(org);
+    renderLista();
+  }
+
+  function renderLista() {
+    const q = norm($("#q").value);
+    let arts;
+    if (q) {
+      arts = D.articulos.filter(a => a._n.includes(q));
+      arts.sort((a, b) => {
+        const na = norm(a.titulo), nb = norm(b.titulo);
+        const pa = na.startsWith(q) ? 0 : 1, pb = nb.startsWith(q) ? 0 : 1;
+        return pa - pb || a.titulo.localeCompare(b.titulo, "es");
+      });
+    } else if (estado.organo) {
+      arts = porOrgano.get(estado.organo) || [];
+    } else {
+      arts = D.articulos.filter(a => !a.alias);
+    }
+    const tope = 300;
+    const frag = document.createDocumentFragment();
+    if (!arts.length) {
+      const d = document.createElement("div");
+      d.className = "vacio";
+      d.textContent = "Sin resultados. Probá con otra palabra.";
+      frag.appendChild(d);
+    }
+    for (const a of arts.slice(0, tope)) {
+      const d = document.createElement("div");
+      d.className = "item";
+      d.dataset.id = a.id;
+      d.innerHTML = `<b>${esc(a.titulo)}</b>`;
+      d.addEventListener("click", () => verArticulo(a));
+      frag.appendChild(d);
+    }
+    if (arts.length > tope) {
+      const d = document.createElement("div");
+      d.className = "vacio";
+      d.textContent = "Mostrando " + tope + " de " + arts.length + " resultados. Afiná la búsqueda.";
+      frag.appendChild(d);
+    }
+    listaEl.replaceChildren(frag);
+  }
+
+  function renderZonas() {
+    const frag = document.createDocumentFragment();
+    const todas = document.createElement("option");
+    todas.value = ""; todas.textContent = "Todas las zonas";
+    frag.appendChild(todas);
+    for (const o of D.organos) {
+      if (o.nombre === "General") continue;
+      const op = document.createElement("option");
+      op.value = o.nombre;
+      op.textContent = cap(o.nombre.toLowerCase()) + " · " + o.n;
+      frag.appendChild(op);
+    }
+    zonaEl.replaceChildren(frag);
+    actualizarZona();
+  }
+
+  if (gl) {
+    let arrastre = null, ultimoPick = 0;
+    canvas.addEventListener("pointerdown", e => {
+      detenerGiro();
+      arrastre = { x: e.clientX, y: e.clientY, a0: estado.angulo, movido: false };
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener("pointermove", e => {
+      if (arrastre) {
+        const dx = e.clientX - arrastre.x;
+        if (Math.abs(dx) > 3) arrastre.movido = true;
+        if (arrastre.movido) setAngulo(arrastre.a0 - dx * 0.45);
+        return;
+      }
+      const ahora = performance.now();
+      if (ahora - ultimoPick < 45) return;
+      ultimoPick = ahora;
+      const r = canvas.getBoundingClientRect();
+      const idx = pick(e.clientX - r.left, e.clientY - r.top);
+      if (idx !== estado.hover) {
+        estado.hover = idx;
+        if (idx >= 0) {
+          const it = items[idx];
+          tip.textContent = it.l + (it.organo ? " · " + it.organo : "");
+          tip.style.left = (e.clientX - r.left) + "px";
+          tip.style.top = (e.clientY - r.top) + "px";
+          tip.style.opacity = 1;
+        } else tip.style.opacity = 0;
+        dibujar();
+      } else if (idx >= 0) {
+        tip.style.left = (e.clientX - r.left) + "px";
+        tip.style.top = (e.clientY - r.top) + "px";
+      }
+    });
+    canvas.addEventListener("pointerup", e => {
+      if (arrastre && !arrastre.movido) {
+        const r = canvas.getBoundingClientRect();
+        const idx = pick(e.clientX - r.left, e.clientY - r.top);
+        if (idx >= 0) {
+          const org = items[idx].organo;
+          if (org && porOrgano.has(org)) elegirOrgano(org);
+        }
+      }
+      arrastre = null;
+    });
+    canvas.addEventListener("pointerleave", () => {
+      estado.hover = -1; tip.style.opacity = 0; dibujar();
+    });
+    canvas.addEventListener("wheel", e => {
+      e.preventDefault();
+      estado.dist = Math.max(1250, Math.min(4200, estado.dist + Math.sign(e.deltaY) * 170));
+      dibujar();
+    }, { passive: false });
+  }
+
+  rot.addEventListener("pointerdown", detenerGiro);
+  rot.addEventListener("input", () => setAngulo(+rot.value));
+  $("#bones").addEventListener("change", e => { estado.huesos = e.target.checked; dibujar(); });
+  let girando = false;
+  function detenerGiro() {
+    estado.giro = false;
+    $("#spin").checked = false;
+  }
+  function girarUnaVuelta() {
+    if (girando) return;
+    const inicio = estado.angulo;
+    const dur = 10000;
+    const t0 = performance.now();
+    girando = true;
+    const paso = t => {
+      if (!estado.giro) { girando = false; return; }
+      const k = Math.min(1, (t - t0) / dur);
+      const suave = k < 0.5 ? 2*k*k : 1 - Math.pow(-2*k + 2, 2) / 2;
+      setAngulo(inicio + 360 * suave);
+      if (k < 1) requestAnimationFrame(paso);
+      else { girando = false; detenerGiro(); setAngulo(inicio); }
+    };
+    requestAnimationFrame(paso);
+  }
+  $("#spin").addEventListener("change", e => {
+    estado.giro = e.target.checked;
+    if (estado.giro) girarUnaVuelta();
+    else girando = false;
+  });
+  $("#q").addEventListener("input", () => {
+    estado.organo = null;
+    actualizarZona();
+    renderLista();
+  });
+  zonaEl.addEventListener("change", () => {
+    if (!zonaEl.value) {
+      estado.organo = null; $("#q").value = "";
+      actualizarZona(); renderLista(); intro(); dibujar();
+      return;
+    }
+    $("#q").value = "";
+    verOrgano(zonaEl.value);
+    renderLista();
+  });
+  $("#limpiar").addEventListener("click", () => {
+    estado.organo = null; $("#q").value = "";
+    actualizarZona(); renderLista(); intro(); dibujar();
+  });
+
+  /* ---------------- libros ---------------- */
+  function parrafos(texto) {
+    const limpio = (texto || "").replace(/\r/g, "").trim();
+    const crudos = limpio.split(/\n\s*\n/).map(b => b.replace(/\n/g, " ").replace(/\s+/g, " ").trim()).filter(Boolean);
+    const bloques = [];
+    for (const b of crudos) {
+      if (b.length <= 900) { bloques.push(b); continue; }
+      let acc = "";
+      for (const f of b.split(/(?<=[.!?»])\s+/)) {
+        if ((acc + " " + f).length > 700 && acc) { bloques.push(acc); acc = f; }
+        else acc = acc ? acc + " " + f : f;
+      }
+      if (acc) bloques.push(acc);
+    }
+    return bloques.map(p => `<p>${esc(p)}</p>`).join("");
+  }
+
+  function tituloCapitulo(c) {
+    if (c.numero) return c.numero + ". " + c.titulo;
+    if (c.tipo && /^CAPÍTULO/i.test(c.tipo))
+      return c.tipo.replace(/^CAPÍTULO/i, "Capítulo") + ". " + c.titulo;
+    return c.titulo;
+  }
+
+  function renderIndice(contenedor, libro, resumenes, libroKey) {
+    const frag = document.createDocumentFragment();
+    let grupo = "";
+    libro.capitulos.forEach((c, i) => {
+      const g = c.parte || "";
+      if (g && g !== grupo) {
+        grupo = g;
+        const h = document.createElement("div");
+        h.className = "grupoLibro"; h.textContent = g;
+        frag.appendChild(h);
+      }
+      const b = document.createElement("button");
+      b.className = "cap";
+      b.dataset.i = i;
+      b.innerHTML = `<b>${esc(tituloCapitulo(c))}</b><span>${esc(resumenes[i] || "")}</span>`;
+      b.addEventListener("click", () => verCapitulo(libro, i, resumenes, contenedor, libroKey));
+      frag.appendChild(b);
+    });
+    contenedor.replaceChildren(frag);
+  }
+
+  function verCapitulo(libro, i, resumenes, indice, libroKey) {
+    const c = libro.capitulos[i];
+    const lector = libroKey === "camino" ? $("#lectorCamino") : $("#lectorCreencia");
+    let html = `<div class="miga">${esc(libro.titulo)}</div>
+      <h2>${esc(tituloCapitulo(c))}</h2>
+      <div class="meta">${esc(resumenes[i] || "")}</div>
+      ${parrafos(c.texto)}`;
+    lector.innerHTML = html;
+    lector.scrollTop = 0;
+    $$(".cap", indice).forEach(el => el.classList.toggle("on", +el.dataset.i === i));
+  }
+
+  function buscarLibro(libro, consulta, indice, resumenes, libroKey) {
+    const q = norm(consulta);
+    $$(".cap", indice).forEach(el => {
+      const c = libro.capitulos[+el.dataset.i];
+      const texto = norm(c.titulo + " " + c.texto + " " + (resumenes[+el.dataset.i] || ""));
+      el.style.display = !q || texto.includes(q) ? "" : "none";
+    });
+  }
+
+  renderIndice($("#indiceLibro"), L.camino, RESUMEN_CAMINO, "camino");
+  verCapitulo(L.camino, 0, RESUMEN_CAMINO, $("#indiceLibro"), "camino");
+  renderIndice($("#indiceCreencia"), L.creencia, RESUMEN_CREENCIA, "creencia");
+  verCapitulo(L.creencia, 1, RESUMEN_CREENCIA, $("#indiceCreencia"), "creencia");
+
+  $("#qCamino").addEventListener("input", e =>
+    buscarLibro(L.camino, e.target.value, $("#indiceLibro"), RESUMEN_CAMINO, "camino"));
+  $("#qCreencia").addEventListener("input", e =>
+    buscarLibro(L.creencia, e.target.value, $("#indiceCreencia"), RESUMEN_CREENCIA, "creencia"));
+
+  /* ---------------- consulta a los libros ---------------- */
+  const API = location.protocol.startsWith("http") ? "" : "http://127.0.0.1:8767";
+  let consultaIniciada = false, consultando = false;
+  let nuevaConversacion = true, nuevaManual = false;
+
+  function nota(texto, malo) {
+    const n = $("#notaConsulta");
+    n.textContent = texto || "";
+    n.classList.toggle("malo", !!malo);
+  }
+
+  function actualizarBotonNueva() {
+    const b = $("#btnNueva");
+    b.classList.toggle("activa", nuevaManual);
+    b.setAttribute("aria-pressed", nuevaManual ? "true" : "false");
+    b.textContent = nuevaManual ? "Nueva pregunta · activa" : "Nueva pregunta";
+  }
+
+  function separador() {
+    const hr = document.createElement("hr");
+    hr.className = "corte";
+    $("#chat").appendChild(hr);
+  }
+
+  function addMsg(tipo, texto, cargando) {
+    const m = document.createElement("div");
+    m.className = "msg " + tipo + (cargando ? " cargando" : "");
+    const quien = document.createElement("div");
+    quien.className = "quien";
+    quien.textContent = tipo === "user" ? "Vos" : "Los libros";
+    const cuerpo = document.createElement("div");
+    cuerpo.className = "texto";
+    cuerpo.textContent = texto;
+    m.append(quien, cuerpo);
+    $("#chat").appendChild(m);
+    $("#chat").scrollTop = $("#chat").scrollHeight;
+    return m;
+  }
+
+  function formato(texto) {
+    const inline = s => s
+      .replace(/\*\*\*([^*]+)\*\*\*/g, "<strong><em>$1</em></strong>")
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>")
+      .replace(/\[([0-9][0-9,\s\-]*)\]/g, '<span class="cita">[$1]</span>');
+    const lineas = esc(texto).split("\n");
+    let html = "", lista = null;
+    const cerrar = () => {
+      if (lista) { html += "</" + lista + ">"; lista = null; }
+    };
+    for (const raw of lineas) {
+      const l = raw.trim();
+      if (!l) { cerrar(); continue; }
+      if (/^---+$/.test(l)) { cerrar(); html += "<hr>"; continue; }
+      let m = l.match(/^(#{1,4})\s+(.*)$/);
+      if (m) { cerrar(); html += "<h4>" + inline(m[2]) + "</h4>"; continue; }
+      m = l.match(/^[*\-]\s+(.*)$/);
+      if (m) {
+        if (lista !== "ul") { cerrar(); html += "<ul>"; lista = "ul"; }
+        html += "<li>" + inline(m[1]) + "</li>";
+        continue;
+      }
+      m = l.match(/^\d+[.)]\s+(.*)$/);
+      if (m) {
+        if (lista !== "ol") { cerrar(); html += "<ol>"; lista = "ol"; }
+        html += "<li>" + inline(m[1]) + "</li>";
+        continue;
+      }
+      cerrar();
+      html += "<p>" + inline(l) + "</p>";
+    }
+    cerrar();
+    return html;
+  }
+
+  function pintarFuentes(m, fuentes) {
+    const d = document.createElement("div");
+    d.className = "fuentes";
+    const b = document.createElement("b");
+    b.textContent = "Fuentes: ";
+    d.appendChild(b);
+    const grupos = new Map();
+    fuentes.forEach(f => {
+      if (!grupos.has(f.libro)) grupos.set(f.libro, []);
+      grupos.get(f.libro).push(f.n);
+    });
+    d.appendChild(document.createTextNode(
+      Array.from(grupos, ([libro, ns]) => libro + " [" + ns.join(", ") + "]").join(" · ")));
+    m.appendChild(d);
+  }
+
+  function pintarSiguientes(m, lista) {
+    const d = document.createElement("div");
+    d.className = "sugerencias siguientes";
+    lista.forEach(q => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = q;
+      b.addEventListener("click", () => preguntar(q));
+      d.appendChild(b);
+    });
+    m.appendChild(d);
+  }
+
+  async function initConsulta() {
+    if (consultaIniciada) return;
+    consultaIniciada = true;
+    const est = $("#estadoConsulta");
+    try {
+      const r = await fetch(API + "/api/estado", { cache: "no-store" });
+      const d = await r.json();
+      if (!r.ok || !d.ok) throw new Error();
+      est.textContent = "Conectado";
+      est.className = "estadoConsulta ok";
+      nota("Cuaderno: " + d.cuaderno + ". Las preguntas siguen la conversación; usá «Nueva pregunta» para empezar de cero.");
+    } catch (e) {
+      consultaIniciada = false;
+      est.textContent = "Servidor apagado";
+      est.className = "estadoConsulta malo";
+      nota("No se pudo conectar con el servidor local. Cerrá esta ventana y abrí INICIAR.cmd.", true);
+    }
+  }
+
+  async function preguntar(texto) {
+    const q = (texto || "").trim();
+    if (!q || consultando) return;
+    consultando = true;
+    const nueva = nuevaConversacion;
+    const habiaUsuario = !!$("#chat .msg.user");
+    if (nueva && habiaUsuario) separador();
+    nuevaConversacion = false;
+    nuevaManual = false;
+    actualizarBotonNueva();
+    $("#btnConsulta").disabled = true;
+    $("#pregunta").value = "";
+    addMsg("user", q);
+    const m = addMsg("bot", "Consultando el cuaderno…", true);
+    const cuerpo = $(".texto", m);
+    const control = new AbortController();
+    const reloj = setTimeout(() => control.abort(), 165000);
+    try {
+      const r = await fetch(API + "/api/consultar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pregunta: q, nueva: nueva }),
+        signal: control.signal,
+      });
+      clearTimeout(reloj);
+      let d;
+      try { d = await r.json(); }
+      catch (e) { d = { ok: false, error: "Respuesta inválida del servidor." }; }
+      if (!r.ok || !d.ok) throw new Error(d.error || "No se pudo consultar.");
+      m.classList.remove("cargando");
+      cuerpo.innerHTML = formato(d.respuesta);
+      if (d.fuentes && d.fuentes.length) pintarFuentes(m, d.fuentes);
+      if (d.siguientes && d.siguientes.length) pintarSiguientes(m, d.siguientes);
+      nota("Conversación continua. Usá «Nueva pregunta» para empezar de cero.");
+    } catch (e) {
+      clearTimeout(reloj);
+      m.classList.remove("cargando");
+      m.classList.add("error");
+      if (e.name === "AbortError") {
+        cuerpo.textContent = "La consulta tardó demasiado. Probá de nuevo.";
+      } else {
+        cuerpo.textContent = "No se pudo consultar: " + e.message;
+        if (/sesión de NotebookLM venció/i.test(e.message)) {
+          $("#estadoConsulta").textContent = "Sesión vencida";
+          $("#estadoConsulta").className = "estadoConsulta malo";
+          nota("Renová la sesión con: python -m notebooklm login --browser chrome", true);
+        }
+      }
+    } finally {
+      consultando = false;
+      $("#btnConsulta").disabled = false;
+      $("#pregunta").focus();
+      m.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+  }
+
+  $("#btnNueva").addEventListener("click", () => {
+    nuevaManual = !nuevaManual;
+    nuevaConversacion = nuevaManual;
+    actualizarBotonNueva();
+    nota(nuevaManual
+      ? "La próxima pregunta empieza una conversación nueva. El chat anterior queda visible."
+      : "Las preguntas siguen la conversación actual.");
+    $("#pregunta").focus();
+  });
+
+  $("#formConsulta").addEventListener("submit", e => {
+    e.preventDefault();
+    preguntar($("#pregunta").value);
+  });
+  $("#pregunta").addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      $("#formConsulta").requestSubmit();
+    }
+  });
+  $("#sugerencias").addEventListener("click", e => {
+    const b = e.target.closest("button[data-q]");
+    if (!b) return;
+    $("#pregunta").value = b.dataset.q;
+    $("#formConsulta").requestSubmit();
+  });
+
+  /* ---------------- modos ---------------- */
+  function cambiarModo(modo) {
+    $$("nav button").forEach(b => b.classList.toggle("on", b.dataset.modo === modo));
+    $("#vDic").classList.toggle("on", modo === "dic");
+    $("#vCamino").classList.toggle("on", modo === "camino");
+    $("#vCreencia").classList.toggle("on", modo === "creencia");
+    $("#vConsulta").classList.toggle("on", modo === "consulta");
+    if (modo === "consulta") initConsulta();
+    if (modo === "dic") {
+      requestAnimationFrame(() => { ajustar(); dibujar(); });
+    } else detenerGiro();
+  }
+  $$("nav button").forEach(b => b.addEventListener("click", () => cambiarModo(b.dataset.modo)));
+
+  /* ---------------- arranque ---------------- */
+  renderZonas();
+  intro();
+  renderLista();
+  setAngulo(0);
+
+  const hash = new URLSearchParams(location.hash.slice(1));
+  if (hash.has("modo")) cambiarModo(hash.get("modo"));
+  if (hash.has("org")) {
+    const org = D.organos.find(o => norm(o.nombre) === norm(hash.get("org")));
+    if (org) { verOrgano(org.nombre); renderLista(); }
+  }
+  if (hash.has("art")) {
+    const art = D.articulos.find(x => x.id === hash.get("art"));
+    if (art) verArticulo(art);
+  }
+  if (hash.has("q")) {
+    $("#q").value = hash.get("q");
+    estado.organo = null;
+    actualizarZona();
+    renderLista();
+  }
+})();
+</script>
+</body>
+</html>
