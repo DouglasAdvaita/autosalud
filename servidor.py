@@ -165,6 +165,7 @@ class Handler(SimpleHTTPRequestHandler):
                 "ok": True,
                 "cuaderno": CFG.get("titulo", "Salud - enfermedad y creencias"),
                 "servidor": True,
+                "nube": NUBE,
             })
             return
         super().do_GET()

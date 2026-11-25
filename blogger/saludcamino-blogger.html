@@ -1,0 +1,145 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;700&display=swap');
+
+  .salud-post { font-family: 'Lora', Georgia, serif; color: #3b2f4a; line-height: 1.75; font-size: 1.05rem; max-width: 740px; margin: 0 auto; padding: 0 16px; }
+  .salud-post h1 { font-family: 'Pacifico', cursive; color: #7b3fa0; font-size: 2.6rem; text-align: center; margin: 0.2em 0 0.1em; line-height: 1.2; }
+  .salud-post .subtitulo { text-align: center; font-family: 'Nunito', sans-serif; color: #9c7bb5; font-size: 1.05rem; margin-bottom: 1.4em; }
+  .salud-post h2 { font-family: 'Pacifico', cursive; color: #c2417a; font-size: 1.7rem; margin: 1.7em 0 0.5em; line-height: 1.3; }
+  .salud-post h3 { font-family: 'Nunito', sans-serif; color: #7b3fa0; font-size: 1.05rem; margin: 1.1em 0 0.3em; }
+  .salud-post p { margin: 0.6em 0; }
+  .salud-post strong { color: #7b3fa0; }
+  .salud-post .destacado { background: linear-gradient(135deg, #f6eefb, #fdf1f6); border-left: 5px solid #c2417a; border-radius: 12px; padding: 14px 18px; margin: 1.2em 0; font-family: 'Nunito', sans-serif; font-size: 0.98rem; }
+  .salud-post .boton { display: inline-block; background: linear-gradient(90deg, #7b3fa0, #c2417a); color: #fff !important; font-family: 'Nunito', sans-serif; font-weight: 700; padding: 12px 26px; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 12px rgba(123,63,160,.3); margin: 4px 6px; }
+  .salud-post .boton-sec { background: #fff; color: #7b3fa0 !important; border: 2px solid #c9a7e0; box-shadow: none; }
+  .salud-post .centro { text-align: center; margin: 1.3em 0; }
+  .salud-post .tarjetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 1.2em 0; font-family: 'Nunito', sans-serif; }
+  .salud-post .tarjeta { background: #fff; border-radius: 14px; padding: 13px 15px; box-shadow: 0 3px 10px rgba(59,47,74,.12); font-size: 0.92rem; line-height: 1.5; }
+  .salud-post .tarjeta strong { display: block; font-size: 1rem; margin-bottom: 3px; color: #7b3fa0; }
+  .salud-post .captura { display: block; margin: 1.1em auto; width: 100%; max-width: 740px; height: auto; border: 1px solid #e6d9f0; border-radius: 14px; box-shadow: 0 6px 18px rgba(59,47,74,.16); background: #0a1424; }
+  .salud-post .pie { text-align: center; font-family: 'Nunito', sans-serif; font-size: 0.84rem; color: #9c7bb5; margin-top: -0.5em; margin-bottom: 1.3em; }
+  .salud-post .nota { font-family: 'Nunito', sans-serif; font-size: 0.9rem; color: #6b5a7e; font-style: italic; }
+  .salud-post .lista-check { list-style: none; padding-left: 0; margin-left: 0; }
+  .salud-post .lista-check li { padding-left: 1.5em; position: relative; margin: 0.35em 0; }
+  .salud-post .lista-check li::before { content: '\2713'; position: absolute; left: 0; color: #7b3fa0; font-weight: 700; }
+  .salud-post .pasos { counter-reset: paso; list-style: none; padding-left: 0; margin-left: 0; }
+  .salud-post .pasos li { counter-increment: paso; position: relative; padding-left: 2.2em; margin: 0.5em 0; }
+  .salud-post .pasos li::before { content: counter(paso); position: absolute; left: 0; top: 0.15em; width: 26px; height: 26px; line-height: 26px; text-align: center; border-radius: 50%; background: #7b3fa0; color: #fff; font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.85rem; }
+  .salud-post .firma { text-align: center; font-family: 'Nunito', sans-serif; font-size: 0.88rem; color: #9c7bb5; margin-top: 2em; border-top: 1px solid #e6d9f0; padding-top: 1em; }
+  .salud-post .firma p { margin: 0.25em 0; }
+  @media (max-width: 600px) {
+    .salud-post h1 { font-size: 2.1rem; }
+    .salud-post h2 { font-size: 1.4rem; }
+    .salud-post { font-size: 1rem; padding: 0 4px; }
+  }
+</style>
+
+<div class="salud-post">
+
+  <h1>SaludCamino</h1>
+  <p class="subtitulo">El cuerpo como mapa de las emociones.<br />Cuerpo 3D, diccionario emocional y los libros de referencia, para explorar en línea o en tu computadora.</p>
+
+  <div class="centro">
+    <a class="boton" href="https://autosalud.onrender.com/" rel="noopener" target="_blank">Probar en línea</a>
+    <a class="boton boton-sec" href="https://github.com/DouglasAdvaita/autosalud/archive/refs/heads/main.zip" rel="noopener" target="_blank">⬇ Descargar (ZIP)</a>
+    <a class="boton boton-sec" href="https://github.com/DouglasAdvaita/autosalud" rel="noopener" target="_blank">Ver el repositorio</a>
+  </div>
+
+  <div class="destacado">
+    <b>Disponible en línea y en tu computadora.</b> En <a href="https://autosalud.onrender.com/" rel="noopener" target="_blank">autosalud.onrender.com</a> podés usar el cuerpo 3D, el diccionario y los libros sin instalar nada. El chat que consulta los libros con NotebookLM funciona solo en la versión local, porque necesita la sesión de Google abierta en tu PC.
+  </div>
+
+  <h2>Qué es SaludCamino</h2>
+  <p>
+    Es una app de consulta y acompañamiento para mirar los malestares desde otra puerta: la del significado emocional. Reúne en una sola pantalla un <strong>cuerpo humano 3D</strong> que se puede girar y tocar, un <strong>diccionario de enfermedades emocionales</strong> con más de mil entradas y los <strong>textos completos</strong> de dos libros de referencia.
+  </p>
+
+  <div class="tarjetas">
+    <div class="tarjeta"><strong>Cuerpo 3D</strong>Huesos y órganos que giran, se acercan y se opacan. Un clic en una parte abre su lectura.</div>
+    <div class="tarjeta"><strong>Diccionario</strong>1.070 entradas y 49 zonas del cuerpo agrupadas, con buscador.</div>
+    <div class="tarjeta"><strong>Dos libros</strong><i>La enfermedad como camino</i> y <i>La biología de la creencia</i>, capítulo por capítulo.</div>
+    <div class="tarjeta"><strong>Chat con los libros</strong>Solo en la versión local: preguntas al cuaderno de NotebookLM, con los pasajes citados.</div>
+  </div>
+
+  <img class="captura" alt="Pantalla inicial de SaludCamino: cuerpo 3D a la izquierda, lista de afecciones al centro y el panel El cuerpo como mapa a la derecha" src="https://files.catbox.moe/ki3yly.png" />
+  <p class="pie">La pantalla inicial: el cuerpo 3D, la lista de afecciones y el panel de lectura.</p>
+
+  <h2>El cuerpo como mapa</h2>
+  <p>
+    A la izquierda está el cuerpo. Se arrastra para girarlo, la rueda del mouse lo acerca y el deslizador de <strong>Rotación</strong> lo lleva al ángulo exacto que quieras mirar. La casilla <strong>huesos</strong> muestra el esqueleto completo y <strong>girar solo</strong> lo deja rotando para verlo de todos lados.
+  </p>
+  <p>
+    Al pasar el mouse por un órgano aparece su nombre. Al hacer clic, ese órgano se ilumina y el panel de la derecha abre su lectura. También se puede buscar por nombre, por síntoma o filtrar por zona del cuerpo.
+  </p>
+
+  <h2>El diccionario emocional</h2>
+  <p>
+    Cada entrada trae hasta cinco bloques: <strong>Significado emocional</strong>, <strong>Descripción física</strong>, <strong>Claves emocionales</strong>, <strong>Consejo</strong> y una <strong>Ampliación</strong> cuando el tema lo pide. No todas las entradas tienen todo el texto cargado: de las 1.070, 831 tienen contenido propio y el resto remite a la entrada principal.
+  </p>
+  <p>
+    El buscador ignora acentos, así que escribiendo <i>rinones</i> o <i>migrana</i> ya aparecen los resultados. El filtro por zona agrupa las afecciones por aparato o región, y el botón <strong>Limpiar</strong> vuelve al inicio.
+  </p>
+
+  <img class="captura" alt="Entrada Cabeza - Migrañas del diccionario, con significado emocional, descripción física y claves emocionales" src="https://files.catbox.moe/j4e9fu.png" />
+  <p class="pie">Una entrada abierta: el órgano se ilumina en el cuerpo y el texto se lee a la derecha.</p>
+
+  <h2>Los dos libros completos</h2>
+  <p>
+    La pestaña <strong>La enfermedad como camino</strong> trae la obra de Thorwald Dethlefsen y Rüdiger Dahlke organizada en dos partes: primero los temas generales —la enfermedad y los síntomas, la polaridad, la sombra, el bien y el mal— y después los órganos y sistemas, del aparato respiratorio a la piel.
+  </p>
+  <p>
+    La pestaña <strong>La biología de la creencia</strong> reúne los capítulos de Bruce Lipton sobre cómo las creencias inciden en la biología. Las dos tienen buscador de capítulos y un lector que mantiene el índice a la vista.
+  </p>
+  <p class="nota">La edición digital de La biología de la creencia no incluye la introducción, el capítulo 5, el apéndice ni la bibliografía.</p>
+
+  <img class="captura" alt="Lector de La enfermedad como camino con el índice de capítulos a la izquierda y el capítulo Corazón y circulación a la derecha" src="https://files.catbox.moe/pd4swq.png" />
+  <p class="pie">El lector de los libros: índice a la izquierda, capítulo completo a la derecha.</p>
+
+  <h2>Preguntale a los libros (versión local)</h2>
+  <p>
+    En la versión que corre en tu computadora, la cuarta pestaña es un chat. Las preguntas van al cuaderno <strong>“Salud - enfermedad y creencias”</strong> de NotebookLM, que reúne las dos obras y el diccionario, y la respuesta llega citando los pasajes que usó.
+  </p>
+  <p>
+    Se puede preguntar por un síntoma, un órgano, una emoción o una idea. Hay preguntas de ejemplo para empezar: qué dice sobre el hígado, cómo se relacionan las emociones y la enfermedad, qué es la sombra, qué plantea Lipton sobre las creencias. El botón <strong>Nueva pregunta</strong> empieza una conversación limpia y deja la anterior a la vista.
+  </p>
+
+  <div class="destacado">
+    <b>Este chat funciona solo en la versión local.</b> La versión en línea de <a href="https://autosalud.onrender.com/" rel="noopener" target="_blank">autosalud.onrender.com</a> muestra el cuerpo 3D, el diccionario y los libros, pero no incluye el chat, porque depende de la sesión de NotebookLM abierta en tu PC. Para usarlo, instalá la app en tu computadora y abrí el servidor local.
+  </div>
+
+  <h2>Cómo instalarlo</h2>
+
+  <p><strong>Sin chat, en dos pasos.</strong> No hace falta instalar nada más:</p>
+  <ol class="pasos">
+    <li>Descargá el ZIP del repositorio y descomprimilo. Queda una carpeta <i>autosalud-main</i>.</li>
+    <li>Abrí <b>INICIAR_OFFLINE.cmd</b>. Se abre la app con el cuerpo 3D y el diccionario.</li>
+  </ol>
+
+  <p><strong>Con chat.</strong> Hace falta Python 3.10 o superior y el instalador hace el resto solo:</p>
+  <ol class="pasos">
+    <li>Ejecutá <b>INSTALAR_CONSULTA_IA.cmd</b>. Busca Python, instala el cliente de NotebookLM y abre el navegador para iniciar sesión con la cuenta de Google.</li>
+    <li>Abrí <b>INICIAR.cmd</b>. Levanta el servidor local y abre la app con las cuatro pestañas.</li>
+  </ol>
+
+  <p class="nota">Si Windows marca los archivos como bloqueados, desbloqueá el ZIP antes de extraerlo. Si el puerto 8767 está ocupado, el servidor acepta otro: python servidor.py --puerto 8768.</p>
+
+  <h2>Para qué sirve y para qué no</h2>
+  <ul class="lista-check">
+    <li><b>Sirve</b> para buscar el sentido emocional de un malestar y leer qué dicen los libros sobre un órgano.</li>
+    <li><b>Sirve</b> para estudiar las obras con el índice a mano y el chat a un clic.</li>
+    <li><b>No sirve</b> para diagnosticar ni para reemplazar a un médico. La app lo dice en su propio panel de inicio.</li>
+  </ul>
+
+  <div class="destacado">
+    <b>Aviso.</b> Este material es de lectura y autoconocimiento. No reemplaza el diagnóstico ni el tratamiento de un profesional de la salud. Ante un síntoma persistente, consultá con tu médico.
+  </div>
+
+  <div class="centro" style="margin-top: 2.2em;">
+    <a class="boton" href="https://github.com/DouglasAdvaita/autosalud/archive/refs/heads/main.zip" rel="noopener" target="_blank">⬇ Descargar SaludCamino (ZIP)</a>
+  </div>
+
+  <div class="firma">
+    <p>Universaldata · SaludCamino · cuerpo y emoción</p>
+    <p class="nota">Repositorio: github.com/DouglasAdvaita/autosalud</p>
+  </div>
+
+</div>

@@ -1133,11 +1133,13 @@
 
   /* ---------------- modos ---------------- */
   function cambiarModo(modo) {
+    if (modo === "consulta" && window.__SALUD_NUBE__) modo = "dic";
     $$("nav button").forEach(b => b.classList.toggle("on", b.dataset.modo === modo));
     $("#vDic").classList.toggle("on", modo === "dic");
     $("#vCamino").classList.toggle("on", modo === "camino");
     $("#vCreencia").classList.toggle("on", modo === "creencia");
-    $("#vConsulta").classList.toggle("on", modo === "consulta");
+    const vc = $("#vConsulta");
+    if (vc) vc.classList.toggle("on", modo === "consulta");
     if (modo === "consulta") initConsulta();
     if (modo === "dic") {
       requestAnimationFrame(() => { ajustar(); dibujar(); });
@@ -1167,6 +1169,18 @@
     actualizarZona();
     renderLista();
   }
+
+  fetch(API + "/api/estado", { cache: "no-store" }).then(r => r.json()).then(d => {
+    if (d && d.nube) {
+      window.__SALUD_NUBE__ = true;
+      const b = document.querySelector('nav button[data-modo="consulta"]');
+      if (b) b.remove();
+      const v = $("#vConsulta");
+      if (v) v.remove();
+      const on = document.querySelector("nav button.on");
+      if (!on || on.dataset.modo === "consulta") cambiarModo("dic");
+    }
+  }).catch(() => {});
 })();
 </script>
 </body>
