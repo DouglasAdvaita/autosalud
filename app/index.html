@@ -202,7 +202,6 @@
       display:inline-block; margin:0 0 14px; padding:7px 12px; border-radius:7px;
       border:1px solid var(--line); background:#0a1424; color:#fff; font:inherit; font-size:12px; cursor:pointer;
     }
-    .lista .item .n { margin-left:auto; color:var(--dim); font-size:11px; }
   }
 </style>
 </head>
@@ -671,7 +670,7 @@
     if (!tieneTexto(a)) {
       html += `<div class="aviso">No hay texto propio cargado para esta entrada.</div>`;
     }
-    if (esMovil()) html = `<button class="volver" type="button">← Volver a las zonas</button>` + html;
+    if (esMovil()) html = `<button class="volver" type="button">← Volver a la lista</button>` + html;
     panel.innerHTML = html;
     panel.scrollTop = 0;
     const volver = $(".volver", panel);
@@ -735,19 +734,6 @@
 
   function renderLista() {
     const q = norm($("#q").value);
-    if (esMovil() && !q) {
-      const fragZ = document.createDocumentFragment();
-      for (const o of D.organos) {
-        if (o.nombre === "General") continue;
-        const dz = document.createElement("div");
-        dz.className = "item zona";
-        dz.innerHTML = `<b>${esc(cap(o.nombre.toLowerCase()))}</b><span class="n">${o.n}</span>`;
-        dz.addEventListener("click", () => { verOrgano(o.nombre); panel.classList.add("abierto"); });
-        fragZ.appendChild(dz);
-      }
-      listaEl.replaceChildren(fragZ);
-      return;
-    }
     let arts;
     if (q) {
       arts = D.articulos.filter(a => a._n.includes(q));
@@ -761,7 +747,7 @@
     } else {
       arts = D.articulos.filter(a => !a.alias);
     }
-    const tope = 300;
+    const tope = esMovil() ? 2000 : 300;
     const frag = document.createDocumentFragment();
     if (!arts.length) {
       const d = document.createElement("div");
