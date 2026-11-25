@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Salud · cuerpo y emoción</title>
+<title>AutoSalud · cuerpo y emoción</title>
 <style>
   :root {
     --bg:#060a13; --panel:#0b1220; --panel2:#0e1728; --line:#1d2b45;
@@ -178,7 +178,7 @@
 <body>
 
 <header>
-  <div class="marca">Salud <span>·</span> cuerpo y emoción</div>
+  <div class="marca">AutoSalud <span>·</span> cuerpo y emoción</div>
   <nav>
     <button class="on" data-modo="dic">Diccionario</button>
     <button data-modo="camino">La enfermedad como camino</button>
@@ -1145,7 +1145,7 @@
       requestAnimationFrame(() => { ajustar(); dibujar(); });
     } else detenerGiro();
   }
-  $$("nav button").forEach(b => b.addEventListener("click", () => cambiarModo(b.dataset.modo)));
+  $$("nav button").forEach(b => b.addEventListener("click", () => { if (b.dataset.modo) cambiarModo(b.dataset.modo); }));
 
   /* ---------------- arranque ---------------- */
   renderZonas();
@@ -1173,8 +1173,13 @@
   fetch(API + "/api/estado", { cache: "no-store" }).then(r => r.json()).then(d => {
     if (d && d.nube) {
       window.__SALUD_NUBE__ = true;
+      const nb = "https://notebook.google.com/notebook/582dd138-4238-461e-9e1f-262665967ac8";
       const b = document.querySelector('nav button[data-modo="consulta"]');
-      if (b) b.remove();
+      if (b) {
+        b.textContent = "Consultar en NotebookLM";
+        b.removeAttribute("data-modo");
+        b.addEventListener("click", (e) => { e.stopImmediatePropagation(); window.open(nb, "_blank", "noopener"); });
+      }
       const v = $("#vConsulta");
       if (v) v.remove();
       const on = document.querySelector("nav button.on");
