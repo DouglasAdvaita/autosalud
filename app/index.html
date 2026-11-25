@@ -183,12 +183,7 @@
     #vDic.on { display:flex; flex-direction:column; height:100%; }
     #vDic .col2 { display:contents; }
     #vDic .buscador { order:1; padding:6px 8px; border-bottom:none; }
-    #vDic #stage {
-      order:2; height:120px; min-height:0;
-      background:#081020 url("modelo3D.png") center/contain no-repeat;
-      border-bottom:1px solid var(--line);
-    }
-    #vDic #stage canvas, #vDic #stage .controles, #vDic #stage .hud, #vDic #stage #tip { display:none !important; }
+    #vDic #stage { display:none; }
     #vDic .lista { order:3; flex:1 1 auto; min-height:0; padding:4px 6px 10px; }
     #vDic #panelDic { order:4; flex:0 0 auto; max-height:46vh; overflow:auto; padding:12px 14px; }
     #vDic #panelDic:empty { display:none; }
