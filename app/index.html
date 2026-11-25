@@ -191,6 +191,13 @@
       position:fixed; inset:0; z-index:60; height:auto; max-height:none;
       background:linear-gradient(180deg,#080f1c,#060a13); padding:16px 14px 28px; overflow:auto;
     }
+    #vCamino.on, #vCreencia.on { display:flex; flex-direction:column; height:100%; }
+    #vCamino .izq, #vCreencia .izq { flex:1 1 auto; min-height:0; border-right:none; border-bottom:none; }
+    #vCamino .lector, #vCreencia .lector { display:none; }
+    #vCamino .lector.abierto, #vCreencia .lector.abierto {
+      display:block; position:fixed; inset:0; z-index:60; height:auto; max-height:none;
+      background:linear-gradient(180deg,#080f1c,#060a13); padding:16px 14px 28px; overflow:auto;
+    }
     .intro .aviso { display:none; }
     .volver {
       position:sticky; top:0; z-index:1;
@@ -927,7 +934,10 @@
       b.className = "cap";
       b.dataset.i = i;
       b.innerHTML = `<b>${esc(tituloCapitulo(c))}</b><span>${esc(resumenes[i] || "")}</span>`;
-      b.addEventListener("click", () => verCapitulo(libro, i, resumenes, contenedor, libroKey));
+      b.addEventListener("click", () => {
+        verCapitulo(libro, i, resumenes, contenedor, libroKey);
+        if (esMovil()) (libroKey === "camino" ? $("#lectorCamino") : $("#lectorCreencia")).classList.add("abierto");
+      });
       frag.appendChild(b);
     });
     contenedor.replaceChildren(frag);
@@ -940,8 +950,11 @@
       <h2>${esc(tituloCapitulo(c))}</h2>
       <div class="meta">${esc(resumenes[i] || "")}</div>
       ${parrafos(c.texto)}`;
+    if (esMovil()) html = `<button class="volver" type="button">← Volver al índice</button>` + html;
     lector.innerHTML = html;
     lector.scrollTop = 0;
+    const volver = $(".volver", lector);
+    if (volver) volver.addEventListener("click", () => lector.classList.remove("abierto"));
     $$(".cap", indice).forEach(el => el.classList.toggle("on", +el.dataset.i === i));
   }
 
@@ -1180,6 +1193,10 @@
     const vc = $("#vConsulta");
     if (vc) vc.classList.toggle("on", modo === "consulta");
     if (modo === "consulta") initConsulta();
+    if (esMovil()) {
+      if (modo === "camino") $("#lectorCamino").classList.remove("abierto");
+      if (modo === "creencia") $("#lectorCreencia").classList.remove("abierto");
+    }
     if (modo === "dic") {
       requestAnimationFrame(() => { ajustar(); dibujar(); });
     } else detenerGiro();
