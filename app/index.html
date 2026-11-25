@@ -174,7 +174,7 @@
     .consultaHead { flex-direction:column; gap:8px; }
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 820px) {
     header { padding:6px 8px; gap:8px; }
     .marca { display:none; }
     nav { display:grid; grid-template-columns:repeat(4, 1fr); gap:4px; width:100%; }
@@ -192,6 +192,17 @@
     #vDic .lista { order:3; flex:1 1 auto; min-height:0; padding:4px 6px 10px; }
     #vDic #panelDic { order:4; flex:0 0 auto; max-height:46vh; overflow:auto; padding:12px 14px; }
     #vDic #panelDic:empty { display:none; }
+    #vDic #panelDic.abierto {
+      position:fixed; inset:0; z-index:60; height:auto; max-height:none;
+      background:linear-gradient(180deg,#080f1c,#060a13); padding:16px 14px 28px; overflow:auto;
+    }
+    .intro .aviso { display:none; }
+    .volver {
+      position:sticky; top:0; z-index:1;
+      display:inline-block; margin:0 0 14px; padding:7px 12px; border-radius:7px;
+      border:1px solid var(--line); background:#0a1424; color:#fff; font:inherit; font-size:12px; cursor:pointer;
+    }
+    .lista .item .n { margin-left:auto; color:var(--dim); font-size:11px; }
   }
 </style>
 </head>
@@ -292,6 +303,7 @@
   const D = window.DICCIONARIO, L = window.LIBROS, M = window.MODELO;
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+  const esMovil = () => window.matchMedia("(max-width: 820px)").matches;
 
   const norm = s => (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -612,6 +624,7 @@
 
   function intro() {
     estado.resaltado = null;
+    if (esMovil()) { panel.innerHTML = ""; panel.classList.remove("abierto"); return; }
     panel.innerHTML = `<div class="intro">
       <div class="miga">Diccionario de las enfermedades emocionales</div>
       <h2>El cuerpo como mapa</h2>
@@ -658,8 +671,19 @@
     if (!tieneTexto(a)) {
       html += `<div class="aviso">No hay texto propio cargado para esta entrada.</div>`;
     }
+    if (esMovil()) html = `<button class="volver" type="button">← Volver a las zonas</button>` + html;
     panel.innerHTML = html;
     panel.scrollTop = 0;
+    const volver = $(".volver", panel);
+    if (volver) volver.addEventListener("click", () => {
+      panel.innerHTML = "";
+      panel.classList.remove("abierto");
+      estado.organo = null;
+      estado.resaltado = null;
+      actualizarZona();
+      renderLista();
+      dibujar();
+    });
     const ir = $("[data-ir]", panel);
     if (ir) ir.addEventListener("click", () => {
       const t = D.articulos.find(x => x.id === ir.dataset.ir);
@@ -711,6 +735,19 @@
 
   function renderLista() {
     const q = norm($("#q").value);
+    if (esMovil() && !q) {
+      const fragZ = document.createDocumentFragment();
+      for (const o of D.organos) {
+        if (o.nombre === "General") continue;
+        const dz = document.createElement("div");
+        dz.className = "item zona";
+        dz.innerHTML = `<b>${esc(cap(o.nombre.toLowerCase()))}</b><span class="n">${o.n}</span>`;
+        dz.addEventListener("click", () => { verOrgano(o.nombre); panel.classList.add("abierto"); });
+        fragZ.appendChild(dz);
+      }
+      listaEl.replaceChildren(fragZ);
+      return;
+    }
     let arts;
     if (q) {
       arts = D.articulos.filter(a => a._n.includes(q));
@@ -737,7 +774,7 @@
       d.className = "item";
       d.dataset.id = a.id;
       d.innerHTML = `<b>${esc(a.titulo)}</b>`;
-      d.addEventListener("click", () => verArticulo(a));
+      d.addEventListener("click", () => { verArticulo(a); if (esMovil()) panel.classList.add("abierto"); });
       frag.appendChild(d);
     }
     if (arts.length > tope) {
@@ -862,6 +899,7 @@
     }
     $("#q").value = "";
     verOrgano(zonaEl.value);
+    if (esMovil()) panel.classList.add("abierto");
     renderLista();
   });
   $("#limpiar").addEventListener("click", () => {
