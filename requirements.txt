@@ -1,0 +1,2 @@
+# La app y su servidor usan solo la biblioteca estándar de Python.
+# No hay dependencias externas que instalar en el servidor.

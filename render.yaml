@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: autosalud
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python servidor.py --no-abrir
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: HOST
+        value: 0.0.0.0
+      - key: AUTOSALUD_NUBE
+        value: "1"

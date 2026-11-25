@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -11,7 +12,9 @@ BASE = Path(__file__).resolve().parent
 APP = BASE / "app"
 CONF = BASE / "cuaderno.json"
 PY = sys.executable
-PUERTO = 8767
+PUERTO = int(os.environ.get("PORT") or 8767)
+HOST = os.environ.get("HOST") or "127.0.0.1"
+NUBE = os.environ.get("AUTOSALUD_NUBE") == "1"
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -34,6 +37,12 @@ CFG = cargar_config()
 
 
 def consultar(pregunta, nueva=False):
+    if NUBE:
+        return {
+            "ok": False,
+            "error": "El chat con los libros funciona solo en la versión local, "
+                     "donde está abierta la sesión de NotebookLM.",
+        }
     pregunta = " ".join(str(pregunta or "").split())
     if not pregunta:
         return {"ok": False, "error": "Escribí una pregunta."}
@@ -121,7 +130,11 @@ class Handler(SimpleHTTPRequestHandler):
     def _origen_permitido(self):
         origen = self.headers.get("Origin")
         puerto = self.server.server_address[1]
+        host = (self.headers.get("Host") or "").strip()
         permitidos = {"null", f"http://127.0.0.1:{puerto}", f"http://localhost:{puerto}"}
+        if host:
+            permitidos.add(f"http://{host}")
+            permitidos.add(f"https://{host}")
         return origen if origen in permitidos else None
 
     def end_headers(self):
@@ -201,7 +214,7 @@ def main():
         return 0
 
     try:
-        servidor = ThreadingHTTPServer(("127.0.0.1", args.puerto), Handler)
+        servidor = ThreadingHTTPServer((HOST, args.puerto), Handler)
     except OSError as e:
         print(f"No se pudo abrir el puerto {args.puerto}: {e}", file=sys.stderr)
         return 1
