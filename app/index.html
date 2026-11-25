@@ -1242,6 +1242,11 @@
       if (!on || on.dataset.modo === "consulta") cambiarModo("dic");
     }
   }).catch(() => {});
+
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")
+      && !["localhost", "127.0.0.1"].includes(location.hostname)) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 })();
 </script>
 </body>
